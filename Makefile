@@ -32,4 +32,4 @@ list_test.out: $(SOURCE_DIR)/list_test.c $(OBJ_DIR)/list.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm *.out
+	rm -f *.out objs/*
