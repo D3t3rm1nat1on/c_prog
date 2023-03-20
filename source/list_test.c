@@ -10,23 +10,17 @@ int main(int argc, char* argv[])
     char* names[] = { "Andrey", "James", "Selina", "Martin" };
 
     for (int i = 0; i < sizeof(names) / sizeof(char*); i++) {
-        printf("iteration...\n");
         linked_list_node_t* node = malloc(sizeof(linked_list_node_t));
         node->item = names[i];
         printf("appending name %s\n", (char*) node->item);
-        printf("list.first = %p\n", list.first);
-        printf("node addr  = %p\n", node);
-        printf("list.last  = %p\n", list.last);
-        printf("list.count = %d\n\n", list.count);
         linked_list_push(&list, node);
     }
 
-    printf("now delete\n");
-
+    printf(" == now delete == \n");
     while (list.count) {
-        free(linked_list_pop(&list));
+        linked_list_node_t* node = linked_list_pop(&list);
+        printf("deleted %s\n", (char*) node->item);
+        free(node);
     }
 
-    printf("list.first = %p\n", list.first);
-    printf("list.last = %p\n", list.last);
 }
