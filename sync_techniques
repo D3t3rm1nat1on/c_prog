@@ -1,0 +1,23 @@
+=====. PROCESSES =====
+1. File system
+2. Memory-mapped file
+3. Network
+4. Signals
+5. Shared memory
+6. Pipes
+7. Unix domain sockets
+8. Message queue
+9. Environment variables
+
+=====. THREADS =====
+1.  Owner process's memory (Data, Stack, and Heap segments)
+2.  Filesystem
+3.  Memory-mapped files
+4.  Network (using internet sockets)
+5.  Signal passing between threads
+6.  Shared memory
+7.  POSIX pipes
+8.  Unix domain sockets
+9.  POSIX message queues
+10. Environment variables
+
