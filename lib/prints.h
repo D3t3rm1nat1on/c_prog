@@ -1,19 +1,28 @@
+#ifndef PRINTS_H
+#define PRINTS_H
 
-void* print_args(int argc, char* argv[])
-{
-    for (int i = 0; i < argc; ++i) {
-        fprintf(stderr, "argv[%d] = [%s]\n", i, argv[i]);
-    }
-}
+#include <string.h>
 
-void* print_id()
-{
-    fprintf(stderr, "My PPID = %d\n", getppid());
-    fprintf(stderr, "My PID = %d\n", getpid());
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
-    fprintf(stderr, "My TID = %d\n", gettid());
-#pragma GCC diagnostic pop
-    fprintf(stderr, "My GID = %d\n", getgid());
-}
+void print_args(int argc, char* argv[]);
+void print_id();
+void prints_id();
 
+// int info(const char* fname, int lineno, const char* fxname, ...);
+// int debug(const char* fname, int lineno, const char* fxname, ...);
+// int error(const char* fname, int lineno, const char* fxname, ...);
+
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
+#define log_info(...)                                                                               \
+    fprintf(stderr, "info: ");                                                                      \
+    fprintf(stderr, __VA_ARGS__);
+
+#define log_error(...)                                                                              \
+    fprintf(stderr, "error: %s:%d: ", __FILENAME__, __LINE__);                                      \
+    fprintf(stderr, __VA_ARGS__);
+
+#define log_debug(...)                                                                              \
+    fprintf(stderr, "debug: %s:%s:%d: ", __FILE__, __func__, __LINE__);                             \
+    fprintf(stderr, __VA_ARGS__);
+
+#endif
