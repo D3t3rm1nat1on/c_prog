@@ -1,35 +1,46 @@
-.PHONY: default all
+.PHONY: default all list clean help
 
-SOURCE_DIR=source
-LIB_DIR=lib
-OBJ_DIR=objs
+WARNINGS=-Wall -Werror
 
-SRC=$(shell find $(SOURCE_DIR) -name *.c -printf "%f\n")
-OUT=$(SRC:.c=.out)
-$(info OUT=$(OUT))
+lib_dir=lib
+lib_object_dir=objs
 
-LIB_SRC=$(shell find $(LIB_DIR) -name *.c -printf "%f\n")
-LIB=$(patsubst %, $(OBJ_DIR)/%, $(LIB_SRC:.c=.o))
-$(info LIB=$(LIB))
+export tests_dir=tests
+export build_root=build
+export CC=gcc
+export CFLAGS=-I$(lib_dir) $(WARNINGS) 
 
-CC=gcc
-CFLAGS=-I. -I$(LIB_DIR) -Wall
+lib_src=$(shell find $(lib_dir) -name *.c -printf "%f\n")
+lib_objs=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.o))
+lib_dump=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.dump))
+
+TESTS = $(shell find $(tests_dir)/* -maxdepth 1 -type d -printf "%f ")
 
 default: all
 
-all: $(OUT) $(LIB)
+all: $(TESTS)
 
-$(OBJ_DIR):
-	mkdir $(OBJ_DIR)
+$(TESTS): $(lib_object_dir) $(lib_objs) $(lib_dump)
+	@echo "----> $@: $^"
+	$(MAKE) -f $(tests_dir)/$@/Makefile $@
 
-$(OBJ_DIR)/%.o: $(LIB_DIR)/%.c $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $^ -o $@
+list: 
+	@ echo "available tests --> $(TESTS)"
 
-list_test.out: $(SOURCE_DIR)/list_test.c $(OBJ_DIR)/list.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-%.out: $(SOURCE_DIR)/%.c
-	$(CC) $(CFLAGS) -o $@ $^
+help:
+	@ echo "make <test_name> --> make msg"
+	@ echo "make list (get tests list)"
+	@ echo "make clean"
+	@ echo "make (build all tests)"
 
 clean:
-	rm -f *.out objs/*
+	rm -f *.out objs/* build/* $(TESTS)
+
+$(lib_object_dir):
+	mkdir $(lib_object_dir)
+
+$(lib_object_dir)/%.o: $(lib_dir)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(lib_object_dir)/%.dump: $(lib_object_dir)/%.o
+	objdump -Dz $< > $@
