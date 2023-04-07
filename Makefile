@@ -15,7 +15,6 @@ lib_src=$(shell find $(lib_dir) -name *.c -printf "%f\n")
 lib_objs=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.o))
 lib_dump=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.dump))
 lib_deps:=$(patsubst %, $(deps_dir)/%, $(lib_src:.c=.d))
-$(info lib_deps=$(lib_deps))
 
 TESTS = $(shell find $(tests_dir)/* -maxdepth 1 -type d -printf "%f ")
 
