@@ -5,24 +5,31 @@ WARNINGS=-Wall -Werror
 lib_dir=lib
 lib_object_dir=objs
 
-export tests_dir=tests
-export build_root=build
-export CC=gcc
-export CFLAGS=-I$(lib_dir) $(WARNINGS) 
+deps_dir=.deps
+tests_dir=tests
+build_root=build
+CC=gcc
+CFLAGS=-I$(lib_dir) $(WARNINGS)
 
 lib_src=$(shell find $(lib_dir) -name *.c -printf "%f\n")
 lib_objs=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.o))
 lib_dump=$(patsubst %, $(lib_object_dir)/%, $(lib_src:.c=.dump))
+lib_deps:=$(patsubst %, $(deps_dir)/%, $(lib_src:.c=.d))
+$(info lib_deps=$(lib_deps))
 
 TESTS = $(shell find $(tests_dir)/* -maxdepth 1 -type d -printf "%f ")
+
+.PRECIOUS: $(deps_dir)/%.d
 
 default: all
 
 all: $(TESTS)
 
-$(TESTS): $(lib_object_dir) $(lib_objs) $(lib_dump)
-	@echo "----> $@: $^"
-	$(MAKE) -f $(tests_dir)/$@/Makefile $@
+define include_test
+include $(tests_dir)/$1/Makefile
+endef
+
+$(foreach test,$(TESTS),$(eval $(call include_test,$(test))))
 
 list: 
 	@ echo "available tests --> $(TESTS)"
@@ -34,13 +41,27 @@ help:
 	@ echo "make (build all tests)"
 
 clean:
-	rm -f *.out objs/* build/* $(TESTS)
+	rm -f *.out objs/* build/* .deps/* $(TESTS)
 
 $(lib_object_dir):
-	mkdir $(lib_object_dir)
+	mkdir -p $@
 
-$(lib_object_dir)/%.o: $(lib_dir)/%.c
+$(deps_dir):
+	mkdir -p $@
+
+$(build_root):
+	mkdir -p $@
+
+-include $(lib_deps)
+
+$(lib_object_dir)/%.o: $(lib_dir)/%.c $(lib_deps) | $(lib_object_dir) $(deps_dir)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(lib_object_dir)/%.dump: $(lib_object_dir)/%.o
 	objdump -Dz $< > $@
+
+$(deps_dir)/%.d: $(lib_dir)/%.c | $(deps_dir)
+	$(CC) $(CFLAGS) -MM -MT $(patsubst $(deps_dir)/%.d,$(lib_object_dir)/%.o,$@) $< > $@
+
+include $(GIT_HOME)/build.mk
+
