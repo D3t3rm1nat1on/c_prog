@@ -1,24 +1,22 @@
 CFLAGS += $(INCLUDES)
 
-src_objs=$(patsubst %, $(build_root)/%, $(src:.c=.o))
+# $1=test_name (shared_mutex ...)
+define test_rule
 
-$(info src=$(src))
-$(info src_objs=$(src_objs))
+-include $($1_src_objs:.o=.d)
+-include $(deps_dir)/$1.d
 
-$(info "$(build_root)/%.o: $(test_src_root)/%.c $(build_root)")
-$(build_root)/%.o: $(test_src_root)/%.c $(build_root)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(build_root)/%.o: $$($1_src_root)/%.c $(deps_dir)/%.d | $(deps_dir)
+	$(CC) $(CFLAGS) -c -o $$@ $$<
 
-(build_root)/%.dump: (build_root)/%.o
-	objdump -Dz $< > $@
+$(build_root)/%.dump: (build_root)/%.o
+	objdump -Dz $$< > $$@
 
-$(info "$(build_root)/$(TEST_NAME): $(build_root)/$(TEST_NAME).o $(src_objs)")
-$(build_root)/$(TEST_NAME): $(build_root)/$(TEST_NAME).o $(src_objs)
-	$(CC) $(CFLAGS) -o $@ $^ objs/*.o
+$(build_root)/$1: $(build_root)/$1.o $$($1_src_objs) $(lib_objs) 
+	$(CC) $(CFLAGS) -o $$@ $$^
 
-%: $(build_root)/%
-	mv $< $@
+$1: $(build_root)/$1 | $(build_root)
+	cp $$< $$@
+endef
 
-$(build_root):
-	mkdir $(build_root)
-
+$(foreach test,$(TESTS),$(eval $(call test_rule,$(test))))
