@@ -62,5 +62,5 @@ $(lib_object_dir)/%.dump: $(lib_object_dir)/%.o
 $(deps_dir)/%.d: $(lib_dir)/%.c | $(deps_dir)
 	$(CC) $(CFLAGS) -MM -MT $(patsubst $(deps_dir)/%.d,$(lib_object_dir)/%.o,$@) $< > $@
 
-include $(GIT_HOME)/build.mk
+include build.mk
 
