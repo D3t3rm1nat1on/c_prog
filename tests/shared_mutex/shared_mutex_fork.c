@@ -1,13 +1,13 @@
+#include "prints.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#include <stdint.h>
 #include <unistd.h>
-#include "prints.h"
 
 void child_func(uint32_t* cnt_ptr, pthread_mutex_t* mtx_ptr, uint32_t count)
 {

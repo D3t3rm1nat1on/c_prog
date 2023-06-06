@@ -38,8 +38,7 @@ void shared_cond_ctor(sh_cond_t* obj, const char* name)
             exit(1);
         }
         if ((e = pthread_condattr_setpshared(&cond_attr, PTHREAD_PROCESS_SHARED))) {
-            fprintf(
-                stdout, "ERROR(%s): Setting as process shared failed: %s\n", name, strerror(e));
+            fprintf(stdout, "ERROR(%s): Setting as process shared failed: %s\n", name, strerror(e));
             exit(1);
         }
         if ((e = pthread_cond_init(obj->ptr, &cond_attr))) {
@@ -47,8 +46,7 @@ void shared_cond_ctor(sh_cond_t* obj, const char* name)
             exit(1);
         }
         if ((e = pthread_condattr_destroy(&cond_attr))) {
-            fprintf(
-                stdout, "ERROR(%s): Destruction of cond attrs failed: %s\n", name, strerror(e));
+            fprintf(stdout, "ERROR(%s): Destruction of cond attrs failed: %s\n", name, strerror(e));
             exit(1);
         }
     }

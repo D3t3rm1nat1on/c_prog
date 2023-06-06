@@ -1,6 +1,6 @@
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <sys/mman.h>
 
@@ -55,4 +55,3 @@ uint32_t shared_uint32_get_value(sh_uint32_t* obj)
     log_info("returning %d\n", *(obj->ptr));
     return *(obj->ptr);
 }
-

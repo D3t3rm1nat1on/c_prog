@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "shared_mem.h"
-#include "shared_uint32.h"
-#include "shared_mutex.h"
 #include "shared_cond.h"
+#include "shared_mem.h"
+#include "shared_mutex.h"
+#include "shared_uint32.h"
 
 bool is_sigint = false;
 sh_cond_t* cond = NULL;
